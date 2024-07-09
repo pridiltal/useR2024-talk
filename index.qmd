@@ -1,0 +1,188 @@
+---
+title: "Exploring Class Overlap in Classification Challenges: Introducing the R Package"
+author: "Priyanga Dilini Talagala"
+subtitle: "useR! 2024, Salzburg, Austria"
+footer: "Slides created with Quarto, available at prital.netlify.app."
+date: 07/09/2024
+date-format: long
+# logo: images/logo.png
+editor: source
+execute:
+  eval: true
+  echo: false
+  warning: false
+  error: false
+  message: false   
+format:
+  revealjs:
+    code-copy: hover
+    code-overflow: scroll
+    multiplex: false
+    embed-resources: true
+    controls: auto
+    progress: true
+    history: true
+    hash-type: number    
+    slide-number: c
+    show-slide-number: all  
+    menu:
+      side: right
+      width: normal
+      numbers: true
+    # chalkboard:
+    #   theme: chalkboard
+    #   src: drawings.json
+      read-only: false
+title-slide-attributes:
+  data-background-image: images/logo.png
+  data-background-opacity: "1"
+  data-background-size: 15%
+  data-background-position: 98% 50%
+  data-background-color: "#b8f5f3"
+  # data-background-image: grid-worms/bird.webp
+  # background-iframe: grid-worms/index.html
+css: style.css
+preload-iframes: true
+---
+
+## {background-color="white"
+background-image="images/img1.png" 
+background-size="80%"
+background-position="70% 80%,center"} 
+
+Data Quality Problems 
+
+```{r}
+#| eval: false
+
+library(naniar)
+library(tidyverse)
+library(patchwork)
+
+set.seed(123)
+
+p1 <- ggplot(airquality, 
+       aes(x = Solar.R, 
+           y = Ozone)) + 
+  theme(aspect.ratio = 1) +
+  geom_miss_point()+
+    ggplot2::labs(title = "Missing Data")
+
+library(stray)
+set.seed(1234)
+n <- 1000 # number of observations
+nout <- 10 # number of outliers
+typical_data <- matrix(rnorm(2*n), ncol = 2, byrow = TRUE)
+out <- matrix(5*runif(2*nout,min=-5,max=5), ncol = 2, byrow = TRUE)
+data <- rbind(out, typical_data )
+outliers <- find_HDoutliers(data, knnsearchtype = "brute")
+p2 <- display_HDoutliers(data, outliers) +
+  ggplot2::labs(title = "Outliers")
+
+# Imbalance
+class1 <- matrix(rnorm(50, mean = 0, sd = 0.5), ncol = 2) 
+class2 <- matrix(rnorm(400, mean = 3, sd = 1), ncol = 2) 
+datanew <- rbind(class1, class2)
+training <- data.frame(datanew)|>
+  mutate(class = as_factor(c(rep(1, 25), rep(2, 200))))
+
+# Plot the dummy data to visualize overlaps
+p3 <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2, color = class)) +
+ggplot2::geom_point() +
+   theme(aspect.ratio = 1) +
+ggplot2::labs(title = "Class Imbalance Problem")
+
+## Class overlapping problem
+library(clap)
+class1 <- matrix(rnorm(400, mean = 0, sd = 1), ncol = 2) + matrix(rep(c(1, 1), each = 200), ncol = 2)
+class2 <- matrix(rnorm(400, mean = 0, sd = 1), ncol = 2) + matrix(rep(c(-0.5, -0.5), each = 200), ncol = 2)
+datanew <- rbind(class1, class2)
+training <- data.frame(datanew,
+class = factor(c(rep(1, 200), rep(2,200))))
+
+# Plot the dummy data to visualize overlaps
+p4 <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2, color = class)) +
+ggplot2::geom_point() +
+   theme(aspect.ratio = 1) +
+ggplot2::labs(title = "Overlapping Classes")
+print(p4)
+
+p <- (p1|p2)/(p3|p4)
+print(p)
+
+```
+
+## Class Overlapping Problem
+
+- Class overlap occurs when instances of more than one class share a common region in the data space and are not clearly separable
+
+## Class Overlapping Problem
+
+- Class overlap occurs when instances of more than one class share a common region in the data space and are not clearly separable
+
+- This overlap can happen due to:
+
+  - **Inherent Similarity**: Natural similarity between classes
+  
+
+   
+   
+
+## Class Overlapping Problem
+
+- Class overlap occurs when instances of more than one class share a common region in the data space and are not clearly separable
+
+- This overlap can happen due to:
+
+  - **Inherent Similarity**: Natural similarity between classes
+  
+  - **Noise**: Variability or errors in data collection
+   
+  
+
+## Class Overlapping Problem
+
+- Class overlap occurs when instances of more than one class share a common region in the data space and are not clearly separable
+
+- This overlap can happen due to:
+
+  - **Inherent Similarity**: Natural similarity between classes
+  
+  - **Noise**: Variability or errors in data collection
+
+  - **Feature Representation**: Insufficient or inadequate features to separate classes
+
+
+## Class Overlapping Problem
+
+- Class overlap occurs when instances of more than one class share a common region in the data space and are not clearly separable
+
+- This overlap can happen due to:
+
+  - **Inherent Similarity**: Natural similarity between classes
+  
+  - **Noise**: Variability or errors in data collection
+
+  - **Feature Representation**: Insufficient or inadequate features to separate classes
+
+- It makes it challenging for classifiers to accurately distinguish between classes
+
+## Implications of Class Overlap
+
+-  Classifiers struggle to correctly classify instances due to overlapping regions
+
+
+## Implications of Class Overlap
+
+-  Classifiers struggle to correctly classify instances due to overlapping regions 
+
+-  Higher error rates occur in areas where classes overlap, leading to more instances being misclassified 
+
+
+## Implications of Class Overlap
+
+-  Classifiers struggle to correctly classify instances due to overlapping regions 
+
+-  Higher error rates occur in areas where classes overlap, leading to more instances being misclassified 
+
+- If the problem of class overlap is not addressed, models may become overly complex, leading to overfitting issues where the model performs well on training data but poorly on unseen data 
