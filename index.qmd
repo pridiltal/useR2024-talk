@@ -45,6 +45,8 @@ css: style.css
 preload-iframes: true
 ---
 
+
+
 ## {background-color="white"
 background-image="images/img1.png" 
 background-size="80%"
@@ -66,7 +68,8 @@ p1 <- ggplot(airquality,
            y = Ozone)) + 
   theme(aspect.ratio = 1) +
   geom_miss_point()+
-    ggplot2::labs(title = "Missing Data")
+    ggplot2::labs(title = "Missing Data") +
+      scale_color_manual(values = c("#FF0000", "#0000FF")) 
 
 library(stray)
 set.seed(1234)
@@ -90,7 +93,8 @@ training <- data.frame(datanew)|>
 p3 <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2, color = class)) +
 ggplot2::geom_point() +
    theme(aspect.ratio = 1) +
-ggplot2::labs(title = "Class Imbalance Problem")
+ggplot2::labs(title = "Class Imbalance Problem") +
+     scale_color_manual(values = c("#FF0000", "#0000FF")) 
 
 ## Class overlapping problem
 library(clap)
@@ -104,7 +108,8 @@ class = factor(c(rep(1, 200), rep(2,200))))
 p4 <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2, color = class)) +
 ggplot2::geom_point() +
    theme(aspect.ratio = 1) +
-ggplot2::labs(title = "Overlapping Classes")
+ggplot2::labs(title = "Overlapping Classes") +
+     scale_color_manual(values = c("#FF0000", "#0000FF"))
 print(p4)
 
 p <- (p1|p2)/(p3|p4)
@@ -186,3 +191,72 @@ print(p)
 -  Higher error rates occur in areas where classes overlap, leading to more instances being misclassified 
 
 - If the problem of class overlap is not addressed, models may become overly complex, leading to overfitting issues where the model performs well on training data but poorly on unseen data 
+
+
+## Types of Class Overlapping Problems
+
+```{r fig2, out.width="100%"}
+# Load required libraries
+library(tidyverse)
+library(patchwork)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# noise_data 
+
+class1 <- matrix(rnorm(400, mean = 0, sd = 1), ncol = 2) + matrix(rep(c(1, 1), each = 200), ncol = 2)
+class2 <- matrix(rnorm(400, mean = 0, sd = 1), ncol = 2) + matrix(rep(c(-0.5, -0.5), each = 200), ncol = 2)
+datanew <- rbind(class1, class2)
+noise_data <- data.frame(datanew,
+y = factor(c(rep(1, 200), rep(2,190), rep(1,10))))
+
+#boundary_data
+
+class1 <- matrix(rnorm(2000, mean = 0, sd = 1), ncol = 2) 
+class2 <- matrix(rnorm(2000, mean = 2.5, sd = 1), ncol = 2) 
+datanew <- rbind(class1, class2)
+boundary_data <- data.frame(datanew,
+y = factor(c(rep(1, 1000), rep(2,1000))))
+
+
+#localized_data
+
+class1 <- matrix(rnorm(2000, mean = 0, sd = 1), ncol = 2) 
+class2 <- matrix(rnorm(2000, mean = 2.5, sd = 1), ncol = 2) 
+class3 <- matrix(rnorm(200, mean = -1, sd = 0.25), ncol = 2) 
+datanew <- rbind(class1, class2, class3)
+localized_data <- data.frame(datanew,
+y = factor(c(rep(1, 1000), rep(2,1000), rep(2,100))))
+
+
+#full_data
+
+class1 <- matrix(rnorm(2000, mean = 0, sd = 1), ncol = 2) 
+class2 <- matrix(rnorm(2000, mean = 0, sd = 1), ncol = 2) 
+datanew <- rbind(class1, class2)
+full_data <- data.frame(datanew,
+y = factor(c(rep(1, 1000), rep(2,1000))))
+
+# Plotting function
+plot_data <- function(data, title) {
+  p <- ggplot(data, aes(x = X1, y = X2, color = y)) +
+    geom_point(size = 2) +
+    scale_color_manual(values = c("#FF0000", "#0000FF"), labels = c("0", "1")) +
+    theme_minimal() +
+      theme(aspect.ratio = 1) +
+    labs(title = title, x = "X1", y = "X2", color = "Class")
+  return(p)
+}
+
+# Create plots for each scenario
+plot_noise <- plot_data(noise_data, "Noise (Random Overlap)")
+plot_boundary <- plot_data(boundary_data, "Boundary Overlap")
+plot_localized <- plot_data(localized_data, "Localized Overlap")
+plot_full <- plot_data(full_data, "Full Overlap")
+
+# Combine plots
+p <- (plot_noise| plot_boundary)/(  plot_localized| plot_full)
+print(p)
+```
+
