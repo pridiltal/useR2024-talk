@@ -159,20 +159,6 @@ print(p)
   - **Feature Representation**: Insufficient or inadequate features to separate classes
 
 
-## Class Overlapping Problem
-
-- Class overlap occurs when instances of more than one class share a common region in the data space and are not clearly separable
-
-- This overlap can happen due to:
-
-  - **Inherent Similarity**: Natural similarity between classes
-  
-  - **Noise**: Variability or errors in data collection
-
-  - **Feature Representation**: Insufficient or inadequate features to separate classes
-
-- It makes it challenging for classifiers to accurately distinguish between classes
-
 ## Implications of Class Overlap
 
 -  Classifiers struggle to correctly classify instances due to overlapping regions
