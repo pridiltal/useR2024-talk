@@ -640,7 +640,7 @@ print(p)
 
 ## 
 
-Case Study 1: Biopsy Data on Breast Cancer Patients
+Case Study 1: Biopsy Data of Breast Cancer Patients
 
 
 :::: {.columns}
@@ -673,7 +673,7 @@ Classification Task
 
 - Benign tumor - generally do not invade and spread
 
-- Malignant tumor cells are more likely to spread to other areas of the body. 
+- Malignant tumor cells - more likely to spread to other areas of the body
 :::
 
 ::::
@@ -687,7 +687,7 @@ background-position="50% 50%,center"}
 
 ## {background-color="white"
 background-image="images/biopsy2.png" 
-background-size="70%"
+background-size="50%"
 background-position="50% 50%,center"} 
 
 
@@ -714,7 +714,21 @@ background-image="images/biopsy6.png"
 background-size="70%"
 background-position="50% 50%,center"} 
 
-## Detecting Class Overlapping Instances of Image databases
+## Case Study 2: Detecting Class Overlapping Instances of Image databases
+
+
+- Aim: detect early stages of pneumonia through chest x-ray images
+
+
+## Case Study 2: Detecting Class Overlapping Instances of Image databases
+
+
+- Aim: detect early stages of pneumonia through chest x-ray images
+
+- Inaccurate analysis of the x-ray results may result in an improper diagnosis and decision making, resulting in a costly mistake that could otherwise save lives
+
+
+## Case Study 2: Detecting Class Overlapping Instances of Image databases
 
 
 - Aim: detect early stages of pneumonia through chest x-ray images
@@ -728,14 +742,14 @@ background-image="images/xray1.png"
 background-size="70%"
 background-position="50% 50%,center"} 
 
-Images of Class "Pneumonia"
+Images of Class "Normal"
 
 ## {background-color="white"
 background-image="images/xray2.png" 
 background-size="70%"
 background-position="50% 50%,center"} 
 
-Images of Class "Normal"
+Images of Class "Pneumonia" 
 
 ## {background-color="white"
 background-image="images/xray3.png" 
