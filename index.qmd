@@ -727,3 +727,88 @@ background-position="50% 50%,center"}
 background-image="images/biopsy6.png" 
 background-size="70%"
 background-position="50% 50%,center"} 
+
+## Detecting Class Overlapping Instances of Image databases
+
+
+- Aim: detect early stages of pneumonia through chest x-ray images
+
+- Inaccurate analysis of the x-ray results may result in an improper diagnosis and decision making, resulting in a costly mistake that could otherwise save lives
+
+- Linearized chest x-rays images
+
+## {background-color="white"
+background-image="images/xray1.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+Images of Class "Pneumonia"
+
+## {background-color="white"
+background-image="images/xray2.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+Images of Class "Normal"
+
+## {background-color="white"
+background-image="images/xray3.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+## {background-color="white"
+background-image="images/xray4.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+## {background-color="white"
+background-image="images/xray5.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+## {background-color="white"
+background-image="images/GIGO.jpg" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+## What Next?
+
+- The Leader Algorithm determined cluster size using the maximum nearest neighbor distance. Further analysis is needed to identify the optimal cluster size.
+
+
+
+## What Next?
+
+- The Leader Algorithm determined cluster size using the maximum nearest neighbor distance. Further analysis is needed to identify the optimal cluster size.
+
+- Euclidean distance was used in the Leader Algorithm to determine cluster size. Additional experiments are required to find faster distance calculation methods.
+
+
+## What Next?
+
+- The Leader Algorithm determined cluster size using the maximum nearest neighbor distance. Further analysis is needed to identify the optimal cluster size.
+
+- Euclidean distance was used in the Leader Algorithm to determine cluster size. Additional experiments are required to find faster distance calculation methods.
+
+- Further analysis is needed to identify classification methods that are robust to class overlapping instances.
+
+
+## What Next?
+
+- The Leader Algorithm determined cluster size using the maximum nearest neighbor distance. Further analysis is needed to identify the optimal cluster size.
+
+- Euclidean distance was used in the Leader Algorithm to determine cluster size. Additional experiments are required to find faster distance calculation methods.
+
+- Further analysis is needed to identify classification methods that are robust to class overlapping instances.
+
+- Further analysis is required to assess the overlapping status of unseen test data in the high-dimensional feature space.
+
+
+## Thank you {style="text-align: center;"}
+
+
+This work was supported in part by the RETINA research lab, funded by the OWSD, a program unit of the United Nations Educational, Scientific, and Cultural Organization (UNESCO).
+
+Slides available at: prital.netlify.app
+
+![](images/QR.png){fig-align="center" width=25}
