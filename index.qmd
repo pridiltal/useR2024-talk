@@ -17,6 +17,7 @@ format:
   revealjs:
     code-copy: hover
     code-overflow: scroll
+    highlightLines: true
     multiplex: false
     embed-resources: true
     controls: auto
@@ -260,3 +261,469 @@ p <- (plot_noise| plot_boundary)/(  plot_localized| plot_full)
 print(p)
 ```
 
+
+## `clap` R Package 
+### Detecting <span style="color:red">C</span>lass Over<span style="color:red">LAP</span>ping Regions in Multidimensional Data
+
+![](images/logo.png){ fig-align="center" width=20%}
+
+`install.packages('clap')`
+
+`devtools::install_github("pridiltal/clap")`
+
+
+## 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+`clap` Framework
+
+</br>
+
+- Normalize the columns of the data. (median and IQR)
+
+- This prevents variables with large variances having disproportional influence on Euclidean distances.
+
+```{r fig4, out.width="100%"}
+library(clap)
+library(tidyverse)
+set.seed(568)
+class1 <- matrix(rnorm(100, mean = 0, sd = 1), ncol = 2) 
+class2 <- matrix(rnorm(100, mean = 1.5, sd = 1), ncol = 2)
+datanew <- rbind(class1, class2)
+training <- data.frame(datanew,
+class = factor(c(rep(1, 50), rep(2, 50))))
+
+# Plot the dummy data to visualize overlaps
+p <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2, color = class)) +
+ggplot2::geom_point(size = 5) +
+ggplot2::labs(title = "Dummy Data with Overlapping Classes") +
+    theme(aspect.ratio = 1, text = element_text(size = 24)) +
+       scale_color_manual(values = c("#FF0000", "#0000FF"))
+```
+:::
+
+::: {.column width="50%"}
+
+```{r fig5, fig.height = 15}
+print(p)
+```
+
+:::
+
+::::
+
+## 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+`clap` Framework
+
+</br>
+
+- Leader Algorithm (Hartingan, 1975)
+
+- Calculate the nearest neighbor distances
+
+
+```{r fig6a, out.width="100%"}
+library(clap)
+library(tidyverse)
+library(ggforce)
+
+# Plot the dummy data to visualize overlaps
+p <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2) ) +
+ggplot2::geom_point(size = 5, colour= "black") +
+ggplot2::labs(title = "Dummy Data with Overlapping Classes") +
+    theme(aspect.ratio = 1, text = element_text(size = 24)) 
+  
+
+```
+:::
+
+::: {.column width="50%"}
+
+```{r fig7a, fig.height = 15}
+print(p)
+```
+
+:::
+
+::::
+
+## 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+`clap` Framework
+
+</br>
+
+- Leader Algorithm (Hartingan, 1975)
+
+- Calculate the nearest neighbor distances
+
+- Performs clustering using a radius based on the maximum nearest neighbor distance
+
+```{r fig6, out.width="100%"}
+library(clap)
+library(tidyverse)
+library(ggforce)
+
+# Plot the dummy data to visualize overlaps
+p <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2) ) +
+ggplot2::geom_point(size = 5, colour= "gray") +
+ggplot2::labs(title = "Dummy Data with Overlapping Classes") +
+    theme(aspect.ratio = 1, text = element_text(size = 24)) 
+
+ # Perform clustering
+cluster_result <- perform_clustering(training, class_column = class)
+
+index<- unlist(lapply( cluster_result$members, `[[`, 1))
+# Compute the pairwise distance matrix
+distance_matrix <- as.matrix(dist(training))
+# Function to find the nearest neighbor distance for each point
+nearest_neighbor_distance <- function(distances) {
+  # Exclude the distance to itself (which is zero)
+  min(distances[distances != 0])
+}
+# Apply the function to each row of the distance matrix
+nn_distances <- apply(distance_matrix, 1, nearest_neighbor_distance)
+r =  max(nn_distances)
+#r= max(nn_distances) 
+circle_data <- training[index, ]
+exemplar <- lapply(cluster_result$members, `[[`, 1) |> as_vector()
+exemplar_data <- training[exemplar, ]
+p1 <-  p +
+   geom_circle(data = circle_data, aes(x0 = X1, y0 = X2, r = r), alpha = 1, colour = "red") +
+  geom_point(data = exemplar_data, aes(x = X1, y = X2), size =5,  color = "black" ) 
+  
+
+```
+:::
+
+::: {.column width="50%"}
+
+```{r fig7, fig.height = 15}
+print(p1)
+```
+
+:::
+
+::::
+
+## 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+`clap` Framework
+
+</br>
+
+```{r}
+#| eval: false
+#| echo: true
+cluster_result <-
+  clap::perform_clustering(
+    data, 
+    class_column = class)
+```
+
+
+
+```{r fig8, out.width="100%"}
+library(clap)
+library(tidyverse)
+library(ggforce)
+
+# Plot the dummy data to visualize overlaps
+p <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2) ) +
+ggplot2::geom_point(size = 5, colour= "gray") +
+ggplot2::labs(title = "Dummy Data with Overlapping Classes") +
+    theme(aspect.ratio = 1, text = element_text(size = 24)) 
+
+ # Perform clustering
+cluster_result <- perform_clustering(training, class_column = class)
+
+index<- unlist(lapply( cluster_result$members, `[[`, 1))
+# Compute the pairwise distance matrix
+distance_matrix <- as.matrix(dist(training))
+# Function to find the nearest neighbor distance for each point
+nearest_neighbor_distance <- function(distances) {
+  # Exclude the distance to itself (which is zero)
+  min(distances[distances != 0])
+}
+# Apply the function to each row of the distance matrix
+nn_distances <- apply(distance_matrix, 1, nearest_neighbor_distance)
+r =  max(nn_distances)
+#r= max(nn_distances) 
+circle_data <- training[index, ]
+exemplar <- lapply(cluster_result$members, `[[`, 1) |> as_vector()
+exemplar_data <- training[exemplar, ]
+p1 <-  p +
+   geom_circle(data = circle_data, aes(x0 = X1, y0 = X2, r = r), alpha = 1, colour = "red") +
+  geom_point(data = exemplar_data, aes(x = X1, y = X2), size =5,  color = "black" ) 
+  
+
+```
+:::
+
+::: {.column width="50%"}
+
+```{r fig9, fig.height = 15}
+print(p1)
+```
+
+:::
+
+::::
+
+
+## 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+`clap` Framework
+
+</br>
+
+
+```{r}
+#| eval: false
+#| echo: true
+cluster_result <-
+  clap::perform_clustering(
+    data, 
+    class_column = class)
+
+composition <- 
+  clap::compute_cluster_composition(
+  cluster_result)
+```
+
+- Computes cluster composition
+
+```{r fig10, out.width="100%"}
+library(clap)
+library(tidyverse)
+library(ggforce)
+
+# Plot the dummy data to visualize overlaps
+p <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2) ) +
+ggplot2::geom_point(size = 5, colour= "gray") +
+ggplot2::labs(title = "Dummy Data with Overlapping Classes") +
+    theme(aspect.ratio = 1, text = element_text(size = 24)) 
+
+ # Perform clustering
+cluster_result <- perform_clustering(training, class_column = class)
+
+index<- unlist(lapply( cluster_result$members, `[[`, 1))
+# Compute the pairwise distance matrix
+distance_matrix <- as.matrix(dist(training))
+# Function to find the nearest neighbor distance for each point
+nearest_neighbor_distance <- function(distances) {
+  # Exclude the distance to itself (which is zero)
+  min(distances[distances != 0])
+}
+# Apply the function to each row of the distance matrix
+nn_distances <- apply(distance_matrix, 1, nearest_neighbor_distance)
+r =  max(nn_distances)
+#r= max(nn_distances) 
+circle_data <- training[index, ]
+exemplar <- lapply(cluster_result$members, `[[`, 1) |> as_vector()
+exemplar_data <- training[exemplar, ]
+p1 <-  p +
+   geom_circle(data = circle_data, aes(x0 = X1, y0 = X2, r = r), alpha = 1, colour = "red") +
+  geom_point(data = exemplar_data, aes(x = X1, y = X2), size =5,  color = "black" ) +
+  geom_point(data = training, aes(x = X1, y = X2, color = class), size =5, ) +
+        scale_color_manual(values = c("#FF0000", "#0000FF"))
+  
+
+```
+:::
+
+::: {.column width="50%"}
+
+```{r fig11, fig.height = 15}
+print(p1)
+```
+
+:::
+
+::::
+
+## 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+`clap` Framework
+
+</br>
+
+
+```{r}
+#| eval: false
+#| echo: true
+cluster_result <-
+  clap::perform_clustering(
+    data, 
+    class_column = class)
+
+composition <- 
+  clap::compute_cluster_composition(
+  cluster_result)
+
+ids_vector <- 
+  clap::extract_ids_vector(
+  composition) 
+```
+
+- Extract IDs
+
+```{r fig12, out.width="100%"}
+library(clap)
+library(tidyverse)
+library(ggforce)
+
+# Plot the dummy data to visualize overlaps
+p <- ggplot2::ggplot(training, ggplot2::aes(x = X1, y = X2) ) +
+ggplot2::geom_point(size = 5, colour= "gray") +
+ggplot2::labs(title = "Dummy Data with Overlapping Classes") +
+    theme(aspect.ratio = 1, text = element_text(size = 24)) 
+
+ # Perform clustering
+cluster_result <- perform_clustering(training, class_column = class)
+
+index<- unlist(lapply( cluster_result$members, `[[`, 1))
+# Compute the pairwise distance matrix
+distance_matrix <- as.matrix(dist(training))
+# Function to find the nearest neighbor distance for each point
+nearest_neighbor_distance <- function(distances) {
+  # Exclude the distance to itself (which is zero)
+  min(distances[distances != 0])
+}
+# Apply the function to each row of the distance matrix
+nn_distances <- apply(distance_matrix, 1, nearest_neighbor_distance)
+r =  max(nn_distances)
+#r= max(nn_distances) 
+circle_data <- training[index, ]
+exemplar <- lapply(cluster_result$members, `[[`, 1) |> as_vector()
+exemplar_data <- training[exemplar, ]
+
+composition <- 
+  compute_cluster_composition(
+  cluster_result)
+
+ids_vector <- extract_ids_vector(
+  composition)
+
+# Subset data based on extracted IDs
+overlapdata <- training[ids_vector, ]
+p1 <-  p +
+  geom_point(data = training, aes(x = X1, y = X2, color = class), size =5, ) +
+        scale_color_manual(values = c("#FF0000", "#0000FF"))
+
+  p2 <- p1 +
+  ggplot2::geom_point(data = overlapdata, ggplot2::aes(X1, X2), colour = "black", size = 5)
+  
+p<- p1/p2
+```
+:::
+
+::: {.column width="50%"}
+
+```{r fig13, fig.height = 15}
+print(p)
+```
+
+:::
+
+::::
+
+## 
+
+Case Study 1: Biopsy Data on Breast Cancer Patients
+
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- clump thickness
+
+- uniformity of cell size
+
+- uniformity of cell shape
+
+- marginal adhesion
+
+- single epithelial cell size
+
+- bare nuclei (16 values are missing)
+
+- bland chromatin
+
+- normal nucleoli
+
+- mitoses
+
+:::
+
+::: {.column width="50%"}
+
+Classification Task
+
+- Benign tumor - generally do not invade and spread
+
+- Malignant tumor cells are more likely to spread to other areas of the body. 
+:::
+
+::::
+
+
+## {background-color="white"
+background-image="images/biopsy1.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+
+## {background-color="white"
+background-image="images/biopsy2.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+
+## {background-color="white"
+background-image="images/biopsy3.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+
+## {background-color="white"
+background-image="images/biopsy4.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+
+## {background-color="white"
+background-image="images/biopsy5.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
+
+
+## {background-color="white"
+background-image="images/biopsy6.png" 
+background-size="70%"
+background-position="50% 50%,center"} 
